@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin — Blood Donation Management</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="header-wrap"><div class="brand"><div class="logo"><img src="logoblood.webp" alt="logo" style="width:56px;height:56px;border-radius:8px;object-fit:contain"/></div><div class="site-title"><h1>Admin</h1><div class="subtitle">Simple admin actions (demo)</div></div></div>
+      <nav class="nav"><a class="btn" href="index.html">Home</a><a class="btn" href="donors.html">Donors</a><a class="btn" href="settings.html">Settings</a></nav>
+    </header>
+
+    <main class="card">
+      <h3>Admin Actions</h3>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+        <button class="btn" id="clearAll">Clear all donors (local)</button>
+        <button class="btn" id="exportAll">Export donors CSV</button>
+      </div>
+    </main>
+
+    <footer class="footer"><small>&copy; <span id="year"></span></small></footer>
+  </div>
+  <div id="_toast"></div>
+  <script src="js/main.js"></script>
+  <script>
+    document.getElementById('year').textContent=new Date().getFullYear();
+    document.getElementById('exportAll').addEventListener('click', ()=> exportDonorsCSV(loadDonors()));
+    document.getElementById('clearAll').addEventListener('click', ()=>{ if(confirm('Clear all donors from localStorage?')){ localStorage.removeItem(STORAGE_KEY); showToast('Cleared'); setTimeout(()=>location.href='index.html',400); } });
+  </script>
+</body>
+</html>

@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Services — Blood Donation Management</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="masthead card" style="margin-bottom:12px">
+      <div class="meta">
+        <div style="display:flex;gap:14px;align-items:center">
+          <div class="logo">
+            <img src="logoblood.webp" alt="logo" style="width:56px;height:56px;border-radius:8px;object-fit:contain" />
+          </div>
+          <div>
+            <div style="font-weight:800;font-size:1.05rem">Services</div>
+            <div style="font-size:0.92rem;opacity:0.95">What we offer — interact and request</div>
+          </div>
+        </div>
+        <div class="contact small" style="text-align:right">
+          <div>Helpdesk: <strong>+91 9876543210</strong></div>
+          <div style="font-size:0.85rem;opacity:0.9">Mon–Sun 9am–6pm</div>
+        </div>
+      </div>
+    </div>
+
+    <header class="header-wrap" style="margin-bottom:18px">
+      <div class="brand"><div class="site-title"><h1 style="font-size:1rem;margin:0">Services</h1><div class="subtitle">Choose a service and request help</div></div></div>
+      <nav class="nav">
+        <a class="btn secondary" href="index.html">Home</a>
+        <a class="btn secondary" href="donors.html">Donors</a>
+        <a class="btn secondary" href="add-donor.html">Add Donor</a>
+        <a class="btn secondary" href="request-blood.html">Request Blood</a>
+        <a class="btn secondary" href="contact.html">Contact</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="card section">
+        <div class="section-title">Available Services</div>
+        <p class="small muted" style="margin-top:8px">Browse services offered by the portal. Use the filters, view details or request a service directly.</p>
+
+        <div style="margin-top:12px;display:flex;gap:12px;align-items:center">
+          <input id="svc_search" placeholder="Search services" style="flex:1;padding:10px;border-radius:10px;border:1px solid var(--border)" />
+          <select id="svc_type" style="width:180px;padding:10px;border-radius:10px;border:1px solid var(--border)">
+            <option value="">All types</option>
+            <option value="logistics">Logistics</option>
+            <option value="screening">Screening</option>
+            <option value="education">Education</option>
+          </select>
+          <button class="btn secondary" id="svc_reset">Reset</button>
+        </div>
+
+        <div id="svc_grid" class="grid-3" style="margin-top:16px"></div>
+
+      </section>
+
+      <section class="section">
+        <div class="card">
+          <div class="section-title">My Favorites</div>
+          <div id="fav_list" style="margin-top:12px"></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="card">
+          <div class="section-title">Service Requests</div>
+          <div class="small muted" style="margin-top:8px">Requests submitted by users from the Services page. You can view, mark resolved or delete requests.</div>
+          <div id="svc_requests" style="margin-top:12px"></div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="footer">
+      <small>&copy; <span id="year"></span> Blood Donation Management — Services</small>
+    </footer>
+  </div>
+
+  <!-- modal for details and request -->
+  <div id="svc_modal" style="position:fixed;left:0;right:0;top:0;bottom:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.45);z-index:9999">
+    <div style="width:680px;max-width:96%;background:#fff;border-radius:12px;padding:18px;box-shadow:0 20px 60px rgba(11,22,50,0.4)">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div><strong id="modal_title">Service</strong><div class="small muted" id="modal_type"></div></div>
+        <button class="btn" id="modal_close">Close</button>
+      </div>
+      <div id="modal_body" style="margin-top:12px;color:var(--muted)"></div>
+      <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn secondary" id="modal_fav">Toggle Favorite</button>
+        <button class="btn primary" id="modal_request">Request Service</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="_toast" role="status" aria-live="polite"></div>
+  <script src="js/main.js"></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    const SERVICES = [
+      { id:'s1', title:'Donor Transport Coordination', type:'logistics', short:'Help arranging donor travel to collection site.', details:'Coordinate buses/cabs, volunteer escorts and timings for donors.' },
+      { id:'s2', title:'Pre-donation Screening Camp', type:'screening', short:'On-site hemoglobin and vitals screening.', details:'Arrange screening events in community centers with basic hemoglobin testing and vitals check.' },
+      { id:'s3', title:'Awareness Workshop', type:'education', short:'Educational session for communities and workplaces.', details:'Interactive workshops covering eligibility, benefits, and myths about donation.' },
+      { id:'s4', title:'Emergency Donor Alert', type:'logistics', short:'Rapid volunteer call for urgent requests.', details:'Send alerts to verified donors in the nearby area matching the blood group.' }
+    ];
+
+    const grid = document.getElementById('svc_grid');
+    const favKey = 'bbms_services_favs_v1';
+    function loadFavs(){ try{ return JSON.parse(localStorage.getItem(favKey)||'[]'); }catch(e){return []} }
+    function saveFavs(list){ localStorage.setItem(favKey, JSON.stringify(list)); }
+
+    // Service requests storage helpers
+    function loadServiceRequests(){ try{ return JSON.parse(localStorage.getItem('service_requests')||'[]'); }catch(e){ return []; } }
+    function saveServiceRequests(list){ localStorage.setItem('service_requests', JSON.stringify(list)); }
+
+    // render requests list and bind actions
+    function renderRequests(){
+      const container = document.getElementById('svc_requests');
+      const reqs = loadServiceRequests();
+      if(!reqs || !reqs.length){ container.innerHTML = '<div class="muted">No requests yet</div>'; return; }
+      container.innerHTML = '';
+      // show newest first
+      reqs.slice().reverse().forEach(r=>{
+        const el = document.createElement('div');
+        el.className = 'tile';
+        el.style.marginBottom = '10px';
+        const svcTitle = (SERVICES.find(s=>s.id===r.serviceId) || {}).title || 'Service';
+        el.innerHTML = `
+          <strong>${svcTitle}</strong>
+          <div class="small muted">${new Date(r.date).toLocaleString()} ${r.resolved? ' • Resolved':''}</div>
+          <div style="margin-top:8px">${esc(r.name)} — ${esc(r.contact)}<div class="muted" style="margin-top:6px">${esc(r.msg||'')}</div></div>
+          <div style="margin-top:8px;display:flex;gap:8px;justify-content:flex-end">
+            <button class="btn secondary" data-req="${r.id}" data-action="toggleResolved">${r.resolved? 'Unresolve':'Resolve'}</button>
+            <button class="btn" data-req="${r.id}" data-action="view">View</button>
+            <button class="btn ghost" data-req="${r.id}" data-action="delete">Delete</button>
+          </div>
+        `;
+        container.appendChild(el);
+      });
+
+      container.querySelectorAll('[data-action]').forEach(b=>{
+        b.onclick = ()=>{
+          const id = b.dataset.req; const action = b.dataset.action;
+          if(action==='delete'){
+            if(confirm('Delete this request?')){ let list = loadServiceRequests(); list = list.filter(x=> x.id !== id); saveServiceRequests(list); renderRequests(); showToast('Request deleted'); }
+            return;
+          }
+          if(action==='toggleResolved'){
+            let list = loadServiceRequests(); const idx = list.findIndex(x=> x.id===id); if(idx>-1){ list[idx].resolved = !list[idx].resolved; saveServiceRequests(list); renderRequests(); showToast(list[idx].resolved? 'Marked resolved' : 'Marked unresolved'); }
+            return;
+          }
+          if(action==='view'){
+            const list = loadServiceRequests(); const r = list.find(x=> x.id===id); if(r){ alert(`${(SERVICES.find(s=>s.id===r.serviceId)||{}).title || 'Service'}\nFrom: ${r.name} — ${r.contact}\n\n${r.msg || ''}`); }
+            return;
+          }
+        };
+      });
+    }
+
+    function renderCard(s){
+      const div = document.createElement('div');
+      div.className = 'card';
+      div.innerHTML = `
+        <strong>${s.title}</strong>
+        <div class="small muted" style="margin-top:6px">${s.short}</div>
+        <div style="margin-top:12px;display:flex;gap:8px">
+          <button class="btn secondary" data-action="view" data-id="${s.id}">View</button>
+          <button class="btn" data-action="fav" data-id="${s.id}">Fav</button>
+          <button class="btn primary" data-action="request" data-id="${s.id}">Request</button>
+        </div>
+      `;
+      return div;
+    }
+
+    function refreshGrid(list){ grid.innerHTML=''; list.forEach(s=> grid.appendChild(renderCard(s)) ); bindGrid(); }
+
+    function bindGrid(){ grid.querySelectorAll('[data-action]').forEach(btn=>{
+      btn.onclick = ()=>{
+        const id = btn.dataset.id; const action = btn.dataset.action;
+        const svc = SERVICES.find(x=>x.id===id);
+        if(action==='view'){ openModal(svc); }
+        if(action==='fav'){ toggleFav(id); }
+        if(action==='request'){ openModal(svc,true); }
+      }
+    }); }
+
+    function updateFavList(){ const favs = loadFavs(); const container = document.getElementById('fav_list'); container.innerHTML=''; if(!favs.length){ container.innerHTML='<div class="muted">No favorites yet</div>'; return } favs.forEach(id=>{ const s = SERVICES.find(x=>x.id===id); if(!s) return; const el = document.createElement('div'); el.className='tile'; el.style.marginBottom='8px'; el.innerHTML = `<strong>${s.title}</strong><div class="small muted">${s.short}</div> <div style="margin-top:8px"><button class="btn secondary" onclick="location.href='services.html#'+s.id">Open</button></div>`; container.appendChild(el); }) }
+
+    function toggleFav(id){ const favs = loadFavs(); const idx = favs.indexOf(id); if(idx===-1){ favs.push(id); showToast('Added to favorites'); } else { favs.splice(idx,1); showToast('Removed from favorites'); } saveFavs(favs); updateFavList(); }
+
+    // Modal
+    const modal = document.getElementById('svc_modal');
+    const modalTitle = document.getElementById('modal_title');
+    const modalBody = document.getElementById('modal_body');
+    const modalType = document.getElementById('modal_type');
+    const modalFav = document.getElementById('modal_fav');
+    const modalRequest = document.getElementById('modal_request');
+    document.getElementById('modal_close').onclick = ()=> modal.style.display='none';
+
+    function openModal(s, openRequest){
+      modalTitle.textContent = s.title;
+      modalType.textContent = s.type;
+      modalBody.innerHTML = `<p>${s.details}</p>`;
+      modal.style.display = 'flex';
+      modalFav.dataset.id = s.id;
+      modalRequest.dataset.id = s.id;
+      if(openRequest) showRequestForm(s);
+    }
+
+    modalFav.onclick = ()=>{ toggleFav(modalFav.dataset.id); }
+
+    function showRequestForm(s){
+      modalBody.innerHTML = `
+        <p>${s.details}</p>
+        <form id="svc_request_form" style="margin-top:10px">
+          <div><label>Your name</label><input id="req_name" required /></div>
+          <div style="margin-top:8px"><label>Phone / Email</label><input id="req_contact" required /></div>
+          <div style="margin-top:8px"><label>Message</label><textarea id="req_msg" rows="4"></textarea></div>
+          <div style="margin-top:10px;display:flex;gap:8px;justify-content:flex-end"><button class="btn" type="button" id="req_cancel">Cancel</button><button class="btn primary" type="submit">Send Request</button></div>
+        </form>
+      `;
+      document.getElementById('req_cancel').onclick = ()=>{ modalBody.innerHTML = `<p>${s.details}</p>`; };
+      document.getElementById('svc_request_form').onsubmit = e=>{
+        e.preventDefault();
+        const name = document.getElementById('req_name').value.trim();
+        const contact = document.getElementById('req_contact').value.trim();
+        const msg = document.getElementById('req_msg').value.trim();
+        if(!name || !contact){ showToast('Name and contact required'); return; }
+        const requests = JSON.parse(localStorage.getItem('service_requests')||'[]');
+        requests.push({ id: 'sr_'+Date.now(), serviceId: s.id, name, contact, msg, date:new Date().toISOString() });
+        localStorage.setItem('service_requests', JSON.stringify(requests));
+        showToast('Service request sent');
+        modal.style.display='none';
+        renderRequests();
+      };
+    }
+
+    modalRequest.onclick = ()=>{ const id = modalRequest.dataset.id; const s = SERVICES.find(x=>x.id===id); if(s) openModal(s,true); }
+
+    // search / filter
+    document.getElementById('svc_search').addEventListener('input', ()=>{ applyFilters(); });
+    document.getElementById('svc_type').addEventListener('change', ()=>{ applyFilters(); });
+    document.getElementById('svc_reset').addEventListener('click', ()=>{ document.getElementById('svc_search').value=''; document.getElementById('svc_type').value=''; applyFilters(); });
+
+    function applyFilters(){ const q = document.getElementById('svc_search').value.trim().toLowerCase(); const type = document.getElementById('svc_type').value; const list = SERVICES.filter(s=>{ const okQ = !q || (s.title+s.short+s.details).toLowerCase().includes(q); const okT = !type || s.type===type; return okQ && okT; }); refreshGrid(list); }
+
+    // init
+    applyFilters(); updateFavList();
+    renderRequests();
+  </script>
+</body>
+</html>

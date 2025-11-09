@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Request Blood — Blood Donation Management</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="header-wrap">
+      <div class="brand"><div class="logo"><img src="logoblood.webp" alt="logo" style="width:56px;height:56px;border-radius:8px;object-fit:contain"/></div><div class="site-title"><h1>Request Blood</h1><div class="subtitle">Find compatible donors quickly</div></div></div>
+      <nav class="nav">
+        <a class="btn secondary" href="index.html">Home</a>
+        <a class="btn secondary" href="eligibility.html">Eligibility</a>
+        <a class="btn secondary" href="preparing.html">Preparing</a>
+        <a class="btn secondary" href="donors.html">Donors</a>
+        <a class="btn secondary" href="add-donor.html">Add Donor</a>
+        <a class="btn secondary" href="request-blood.html">Request Blood</a>
+      </nav>
+    </header>
+
+    <main class="card fade-in">
+      <form id="reqForm" style="display:flex;gap:12px;flex-wrap:wrap;align-items:end">
+        <div style="width:180px">
+          <label for="need">Blood group</label>
+          <select id="need" class="" aria-label="Needed blood group">
+            <option value="">Select</option>
+            <option>A+</option><option>A-</option>
+            <option>B+</option><option>B-</option>
+            <option>AB+</option><option>AB-</option>
+            <option>O+</option><option>O-</option>
+          </select>
+        </div>
+
+        <div style="flex:1;min-width:160px">
+          <label for="needCity">City (optional)</label>
+          <input id="needCity" placeholder="City" aria-label="City" />
+        </div>
+
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="btn primary" type="submit">Find Matches</button>
+          <button class="btn" type="button" id="btnClearMatches">Clear</button>
+        </div>
+      </form>
+
+      <div id="results" style="margin-top:14px"></div>
+
+      <hr style="margin:18px 0;border:none;border-top:1px solid var(--border)">
+
+      <div class="muted small">Tip: compatible matching uses common transfusion rules — always verify donor eligibility before contacting.</div>
+    </main>
+
+    <footer class="footer"><small>&copy; <span id="year"></span></small></footer>
+  </div>
+
+  <div id="_toast"></div>
+  <script src="js/main.js"></script>
+  <script src="js/request.js"></script>
+</body>
+</html>

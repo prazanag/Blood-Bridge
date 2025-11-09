@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>About — Blood Donation Management</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="header-wrap">
+      <div class="brand"><div class="logo"><img src="logoblood.webp" alt="logo" style="width:56px;height:56px;border-radius:8px;object-fit:contain"/></div><div class="site-title"><h1>About</h1><div class="subtitle">Why donate blood?</div></div></div>
+      <nav class="nav">
+        <a class="btn secondary" href="index.html">Home</a>
+        <a class="btn secondary" href="donors.html">Donors</a>
+        <a class="btn secondary" href="add-donor.html">Add Donor</a>
+        <a class="btn secondary" href="request-blood.html">Request Blood</a>
+        <a class="btn secondary" href="eligibility.html">Eligibility</a>
+        <a class="btn secondary" href="preparing.html">Preparing</a>
+        <a class="btn secondary" href="after-care.html">After care</a>
+        <a class="btn secondary" href="contact.html">Contact</a>
+      </nav>
+    </header>
+
+    <main class="card">
+      <h2>About this system</h2>
+      <p class="muted">This demo app helps manage blood donors locally in your browser. It is built as a simple, professional front-end to demonstrate donor registration, searching, requesting compatible donors, and CSV import/export.</p>
+
+      <p class="small muted" style="margin-top:8px">For guidance on donating, see the <a href="donate-info.html">Donate Info</a> guides (eligibility, preparing, after donation care).</p>
+
+      <h3 style="margin-top:12px">Why donate?</h3>
+      <ul>
+        <li>Save lives — a single donation can save multiple patients.</li>
+        <li>Healthy donors give regularly and help maintain safe blood supply.</li>
+        <li>Every donation is tested and processed for safety.</li>
+      </ul>
+
+      <h3 style="margin-top:12px">How to use</h3>
+      <ol>
+        <li>Use "Add Donor" to register donors.</li>
+        <li>Use "Donors" to search, edit or delete entries.</li>
+        <li>Use "Request Blood" to find compatible donors by blood group and city.</li>
+      </ol>
+    </main>
+
+    <footer class="footer"><small>&copy; <span id="year"></span></small></footer>
+  </div>
+  <div id="_toast"></div>
+  <script>document.getElementById('year').textContent=new Date().getFullYear()</script>
+</body>
+</html>

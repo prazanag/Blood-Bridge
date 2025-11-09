@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Blood Donation Management</title>
+  <meta name="description" content="Professional Blood Donation Management - register donors, search, request and export" />
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+    :root{
+        --bg:#f6f7fb;
+        --card:#fff;
+        --accent:#c62828;
+        --accent-2:#ff6b6b;
+        --muted:#6b7280;
+        --text:#0f172a;
+        --glass:rgba(255,255,255,0.6);
+        --radius:12px;
+        --shadow:0 8px 24px rgba(16,24,40,0.06);
+        --success:#16a34a;
+        --focus: rgba(198,40,40,0.18);
+        --border: #e6edf3;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+        margin:0;
+        font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial;
+        color:var(--text);
+        background:linear-gradient(180deg,var(--bg),#fff);
+        -webkit-font-smoothing:antialiased;
+        -moz-osx-font-smoothing:grayscale;
+        line-height:1.35;
+        -webkit-tap-highlight-color:transparent;
+    }
+
+    .container{max-width:1100px;margin:28px auto;padding:18px}
+
+    /* Header */
+    header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{
+        width:56px;height:56px;border-radius:12px;
+        background:linear-gradient(135deg,var(--accent),var(--accent-2));
+        display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:20px;
+        box-shadow:var(--shadow);
+        flex:0 0 56px;
+    }
+    h1{margin:0;font-size:1.15rem}
+    .subtitle{color:var(--muted);font-size:0.95rem}
+
+    /* Top actions */
+    .actions{display:flex;gap:8px}
+    .btn{
+        padding:8px 12px;border-radius:10px;border:1px solid rgba(15,23,42,0.06);background:#fff;cursor:pointer;
+        font-weight:600;color:var(--text);transition:all .12s ease;
+        box-shadow:none;
+    }
+    .btn:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(16,24,40,0.04)}
+    .btn:active{transform:translateY(0)}
+    .btn:focus{outline:none;box-shadow:0 0 0 4px var(--focus)}
+    .btn.primary{
+        background:linear-gradient(90deg,var(--accent),var(--accent-2));
+        color:#fff;border:none;box-shadow:0 8px 20px rgba(198,40,40,0.12)
+    }
+
+    /* layout */
+    .grid{display:grid;grid-template-columns:2fr 1fr;gap:18px}
+    .card{background:var(--card);padding:16px;border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid rgba(15,23,42,0.03)}
+
+    label{display:block;font-size:0.85rem;color:var(--muted);margin-bottom:6px}
+    input,select,textarea{
+        width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);background:#fff;font-size:0.95rem;
+        transition:box-shadow .12s ease, border-color .12s ease;
+        -webkit-appearance:none;-moz-appearance:none;appearance:none;
+    }
+    input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 6px 18px rgba(198,40,40,0.06)}
+    .form-row{display:flex;gap:12px}
+
+    /* table */
+    .table-wrap{overflow:auto;border-radius:8px;border:1px solid rgba(15,23,42,0.03)}
+    table{width:100%;border-collapse:collapse;font-size:0.95rem;background:transparent}
+    th,td{padding:10px;border-bottom:1px solid #f2f4f7;text-align:left;vertical-align:middle}
+    th{background:#fbfbfd;position:sticky;top:0;z-index:1;font-weight:600}
+    th[data-sort]{cursor:pointer;user-select:none}
+    th[data-sort]::after{content:' ↕';font-weight:400;color:var(--muted);font-size:0.85rem;margin-left:6px}
+    tr:hover td{background:linear-gradient(90deg,rgba(255,255,255,0.6),rgba(255,255,255,0.6))}
+    tbody tr:nth-child(odd) td{background:transparent}
+    .pill{display:inline-block;padding:5px 8px;border-radius:999px;background:#fff6f6;color:var(--accent);font-weight:600;border:1px solid #ffeaea}
+
+    /* request area */
+    .matches .match{
+        padding:12px;border-radius:10px;background:#fff6f6;border:1px solid #ffeaea;margin-bottom:8px;
+        display:flex;flex-direction:column;gap:6px;
+    }
+
+    /* small helpers */
+    .muted{color:var(--muted);font-size:0.92rem}
+    .table-actions{display:flex;gap:6px;align-items:center}
+
+    /* modal + toast */
+    .modal{position:fixed;inset:0;background:rgba(3,7,18,0.45);display:none;align-items:center;justify-content:center;z-index:60;padding:18px}
+    .modal.open{display:flex}
+    .modal-card{background:var(--card);padding:16px;border-radius:12px;max-width:520px;width:100%;box-shadow:var(--shadow)}
+    .toast{
+        position:fixed;right:20px;bottom:20px;background:#111;color:#fff;padding:10px 14px;border-radius:10px;
+        opacity:0;transform:translateY(8px);transition:opacity .18s ease,transform .18s ease;z-index:70;
+    }
+    .toast.show{opacity:1;transform:translateY(0)}
+
+    /* responsive */
+    @media (max-width:980px){.grid{grid-template-columns:1fr}.form-row{flex-direction:column}}
+    @media (max-width:720px){
+        .btn{padding:8px 10px;font-size:0.95rem}
+        .logo{width:48px;height:48px;font-size:18px}
+        .container{padding:12px}
+    }
+
+    footer{margin-top:18px;text-align:center;color:var(--muted);font-size:0.9rem}
+</style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo"><img src="logoblood.webp" alt="logo" style="width:56px;height:56px;border-radius:8px;object-fit:contain"/></div>
+        <div>
+          <h1>Blood Donation Management</h1>
+          <div class="subtitle">Professional donor registry — add, search, match and export</div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn" id="btnShowAdd">Add Donor</button>
+        <button class="btn" id="btnShowList">Donor List</button>
+        <button class="btn primary" id="btnShowRequest">Request Blood</button>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="card" id="panelMain">
+        <h2 style="margin-top:0">Add Donor</h2>
+        <form id="donorForm">
+          <input type="hidden" id="donorId" />
+          <div class="form-row">
+            <div style="flex:1">
+              <label for="name">Full name</label>
+              <input id="name" type="text" placeholder="Full name" required />
+            </div>
+            <div style="width:120px">
+              <label for="age">Age</label>
+              <input id="age" type="number" min="18" max="75" placeholder="Age" required />
+            </div>
+          </div>
+
+          <div class="form-row" style="margin-top:10px">
+            <div style="flex:1">
+              <label for="gender">Gender</label>
+              <select id="gender"><option value="Male">Male</option><option value="Female">Female</option><option value="Other">Other</option></select>
+            </div>
+            <div style="width:140px">
+              <label for="bloodGroup">Blood group</label>
+              <select id="bloodGroup" required>
+                <option value="">Select</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row" style="margin-top:10px">
+            <div style="flex:1">
+              <label for="phone">Phone</label>
+              <input id="phone" type="tel" placeholder="e.g. +1-555-555-5555" required />
+            </div>
+            <div style="width:160px">
+              <label for="city">City</label>
+              <input id="city" type="text" placeholder="City" required />
+            </div>
+          </div>
+
+          <div style="margin-top:10px">
+            <label for="lastDonation">Last donation date</label>
+            <input id="lastDonation" type="date" />
+          </div>
+
+          <div class="form-row" style="margin-top:12px;align-items:center">
+            <div style="display:flex;gap:8px">
+              <button class="btn primary" type="submit">Save Donor</button>
+              <button class="btn" type="button" id="clearForm">Clear</button>
+            </div>
+            <div style="margin-left:auto;color:var(--muted)">Tip: Click a donor row to edit</div>
+          </div>
+        </form>
+
+        <hr style="margin:18px 0;border:none;border-top:1px solid #f2f4f7">
+
+        <h3>Find Donors</h3>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center">
+          <input id="searchName" placeholder="Search by name" style="flex:1;min-width:180px" />
+          <select id="filterGroup" style="width:160px"><option value="">All blood groups</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select>
+          <input id="filterCity" placeholder="City" style="width:140px" />
+          <button class="btn" id="clearFilters">Clear</button>
+          <div style="margin-left:auto;display:flex;gap:8px">
+            <label class="btn">Import CSV<input type="file" id="importCsv" accept="text/csv" style="display:none"/></label>
+            <button class="btn" id="exportCsv">Export CSV</button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table id="donorTable">
+            <thead>
+              <tr>
+                <th data-sort="name">Name</th>
+                <th data-sort="age">Age</th>
+                <th data-sort="blood">Blood</th>
+                <th>Phone</th>
+                <th data-sort="city">City</th>
+                <th>Last Donation</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <aside class="card" id="panelRight">
+        <h3 style="margin-top:0">Request Blood</h3>
+        <form id="requestForm">
+          <label for="reqBlood">Blood group needed</label>
+          <select id="reqBlood" style="width:100%"><option value="">Select</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select>
+          <label style="margin-top:8px">City (optional)</label>
+          <input id="reqCity" placeholder="City" />
+          <div style="margin-top:10px;display:flex;gap:8px">
+            <button class="btn primary" type="submit">Find Matches</button>
+            <button class="btn" type="button" id="btnClearMatches">Clear</button>
+          </div>
+        </form>
+
+        <div id="matches" class="matches" style="margin-top:12px"></div>
+
+        <hr style="margin:16px 0;border:none;border-top:1px solid #f2f4f7">
+        <div>
+          <h4>Overview</h4>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <div style="flex:1;background:#fff;padding:12px;border-radius:10px;text-align:center;border:1px solid #f3f4f6">
+              <div class="muted">Total donors</div>
+              <strong id="statTotal">0</strong>
+            </div>
+            <div style="flex:1;background:#fff;padding:12px;border-radius:10px;text-align:center;border:1px solid #f3f4f6">
+              <div class="muted">Groups</div>
+              <strong id="statGroups">0</strong>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <footer>
+      <small>&copy; <span id="year"></span> Blood Donation Management — Demo</small>
+    </footer>
+  </div>
+
+  <!-- modal -->
+  <div class="modal" id="confirmModal">
+    <div class="modal-card">
+      <h3 id="confirmTitle">Confirm</h3>
+      <p id="confirmText">Confirm action</p>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+        <button class="btn" id="confirmCancel">Cancel</button>
+        <button class="btn primary" id="confirmOk">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // Enhanced interactions (single-file augmentation)
+    const STORAGE_KEY = 'bbms_donors_v3';
+    const yearEl = document.getElementById('year'); yearEl.textContent = new Date().getFullYear();
+
+    // Elements
+    const donorForm = document.getElementById('donorForm');
+    const donorTableBody = document.querySelector('#donorTable tbody');
+    const searchName = document.getElementById('searchName');
+    const filterGroup = document.getElementById('filterGroup');
+    const filterCity = document.getElementById('filterCity');
+    const clearFilters = document.getElementById('clearFilters');
+    const importCsv = document.getElementById('importCsv');
+    const exportCsv = document.getElementById('exportCsv');
+    const requestForm = document.getElementById('requestForm');
+    const matchesEl = document.getElementById('matches');
+    const statTotal = document.getElementById('statTotal');
+    const statGroups = document.getElementById('statGroups');
+    const toast = document.getElementById('toast');
+
+    const confirmModal = document.getElementById('confirmModal');
+    const confirmTitle = document.getElementById('confirmTitle');
+    const confirmText = document.getElementById('confirmText');
+    const confirmOk = document.getElementById('confirmOk');
+    const confirmCancel = document.getElementById('confirmCancel');
+
+    // Nav
+    document.getElementById('btnShowAdd').addEventListener('click', ()=>{ document.getElementById('name').focus(); window.scrollTo({top:0,behavior:'smooth'}); });
+    document.getElementById('btnShowList').addEventListener('click', ()=>{ document.querySelector('#donorTable').scrollIntoView({behavior:'smooth'}); });
+    document.getElementById('btnShowRequest').addEventListener('click', ()=>{ document.getElementById('reqBlood').focus(); document.getElementById('reqBlood').scrollIntoView({behavior:'smooth'}); });
+
+    // Data
+    let donors = load();
+    let sortState = {key:'',dir:1};
+    render();
+
+    function uid(){ return 'd_' + Math.random().toString(36).slice(2,9); }
+    function load(){ try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||[];}catch(e){return [];} }
+    function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(donors)); showToast('Saved'); render(); }
+    function showToast(msg,timeout=2200){ toast.textContent=msg; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'), timeout); }
+
+    // Validation
+    function validate(d){ if(!d.name) return 'Name required'; if(!d.blood) return 'Select blood group'; if(!d.city) return 'City required'; if(!d.phone || d.phone.length<7) return 'Phone looks invalid'; if(d.age<18||d.age>75) return 'Age must be 18–75'; return ''; }
+
+    donorForm.addEventListener('submit', e=>{
+      e.preventDefault();
+      const id = document.getElementById('donorId').value || uid();
+      const donor = {
+        id,
+        name: document.getElementById('name').value.trim(),
+        age: parseInt(document.getElementById('age').value,10)||0,
+        gender: document.getElementById('gender').value,
+        blood: document.getElementById('bloodGroup').value,
+        phone: document.getElementById('phone').value.trim(),
+        city: document.getElementById('city').value.trim(),
+        lastDonation: document.getElementById('lastDonation').value || null,
+        updated: new Date().toISOString()
+      };
+      const err = validate(donor); if(err){ alert(err); return; }
+      const idx = donors.findIndex(x=>x.id===id);
+      if(idx>-1) donors[idx]=donor; else donors.unshift(donor);
+      save(); donorForm.reset(); document.getElementById('donorId').value='';
+    });
+
+    document.getElementById('clearForm').addEventListener('click', ()=>donorForm.reset());
+
+    // Render list with filters, sorting
+    function render(){
+      const qName = (searchName?.value||'').toLowerCase();
+      const qGroup = (filterGroup?.value||'');
+      const qCity = (filterCity?.value||'').toLowerCase();
+      let list = donors.filter(d=>{
+        if(qName && !d.name.toLowerCase().includes(qName)) return false;
+        if(qGroup && d.blood!==qGroup) return false;
+        if(qCity && d.city.toLowerCase()!==qCity) return false; return true;
+      });
+
+      // sort
+      if(sortState.key){
+        list.sort((a,b)=>{ if(a[sortState.key]<b[sortState.key]) return -1*sortState.dir; if(a[sortState.key]>b[sortState.key]) return 1*sortState.dir; return 0 });
+      }
+
+      donorTableBody.innerHTML = list.map(d=>`<tr data-id="${d.id}"><td><strong>${esc(d.name)}</strong><div class="muted">${esc(d.gender)} • ${d.age} yrs</div></td><td>${esc(d.age)}</td><td><span class="pill">${esc(d.blood)}</span></td><td>${esc(d.phone)}</td><td>${esc(d.city)}</td><td>${formatDate(d.lastDonation)}</td><td><button class="btn" data-act="edit">Edit</button> <button class="btn" data-act="delete">Delete</button></td></tr>`).join('') || '<tr><td colspan="7" class="muted" style="text-align:center">No donors found</td></tr>';
+
+      statTotal.textContent = donors.length;
+      statGroups.textContent = [...new Set(donors.map(x=>x.blood).filter(Boolean))].length;
+    }
+
+    function esc(s=''){return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')}
+    function formatDate(d){ if(!d) return '—'; const t=new Date(d); return isNaN(t)?'—':t.toLocaleDateString(); }
+
+    // Table actions
+    donorTableBody.addEventListener('click', e=>{
+      const tr = e.target.closest('tr'); if(!tr) return; const id = tr.dataset.id; const act = e.target.dataset.act;
+      if(act==='edit'){ const d = donors.find(x=>x.id===id); if(!d) return; document.getElementById('donorId').value=d.id; document.getElementById('name').value=d.name; document.getElementById('age').value=d.age; document.getElementById('gender').value=d.gender; document.getElementById('bloodGroup').value=d.blood; document.getElementById('phone').value=d.phone; document.getElementById('city').value=d.city; document.getElementById('lastDonation').value=d.lastDonation||''; window.scrollTo({top:0,behavior:'smooth'}); showToast('Editing donor'); }
+      if(act==='delete'){ const d = donors.find(x=>x.id===id); if(!d) return; confirmDialog('Delete donor','Are you sure you want to delete '+d.name+'?',()=>{ donors = donors.filter(x=>x.id!==id); save(); }); }
+    });
+
+    // Sorting headers
+    document.querySelectorAll('th[data-sort]').forEach(th=>{
+      th.style.cursor='pointer'; th.addEventListener('click', ()=>{
+        const key = th.dataset.sort; if(sortState.key===key) sortState.dir*=-1; else { sortState.key=key; sortState.dir=1 }
+        render();
+      });
+    });
+
+    // Filters
+    [searchName,filterGroup,filterCity].forEach(el=>el && el.addEventListener('input', render));
+    clearFilters.addEventListener('click', ()=>{ if(searchName) searchName.value=''; if(filterGroup) filterGroup.value=''; if(filterCity) filterCity.value=''; render(); });
+
+    // CSV export/import
+    exportCsv.addEventListener('click', ()=>{
+      if(!donors.length){ alert('No donors to export'); return; }
+      const headers=['id','name','age','gender','blood','phone','city','lastDonation','updated'];
+      const rows = donors.map(d=>headers.map(h=>`"${String(d[h]||'').replaceAll('"','""')}"`).join(','));
+      const csv = headers.join(',') + '\n' + rows.join('\n');
+      const blob = new Blob([csv],{type:'text/csv'}); const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='donors.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    });
+
+    importCsv.addEventListener('change', e=>{
+      const f = e.target.files[0]; if(!f) return; const reader=new FileReader(); reader.onload = ev=>{ const text=ev.target.result; try{ const parsed = csvToArray(text); parsed.forEach(r=>{ if(!r.name) return; donors.unshift({ id: r.id||uid(), name:r.name, age:parseInt(r.age,10)||0, gender:r.gender||'Male', blood:r.blood||'', phone:r.phone||'', city:r.city||'', lastDonation:r.lastDonation||null, updated:new Date().toISOString() }); }); save(); showToast('Imported '+parsed.length+' rows'); }catch(err){ alert('Invalid CSV'); }}; reader.readAsText(f);
+    });
+
+    function csvToArray(text){ const lines = text.split(/\r?\n/).filter(Boolean); if(!lines.length) return []; const headers = lines.shift().split(/,\s*/).map(h=>h.replace(/^"|"$/g,'')); return lines.map(l=>{ const values = l.match(/("[^"]*(""[^"]*)*"|[^,]+)/g) || []; const obj={}; headers.forEach((h,i)=>{ const v = values[i] ? values[i].trim().replace(/^"|"$/g,'').replaceAll('""','"') : ''; obj[h]=v; }); return obj; }); }
+
+    // Request blood compatibility
+    const compatibility = { 'O-':['A+','A-','B+','B-','AB+','AB-','O+','O-'], 'O+':['A+','B+','AB+','O+'], 'A-':['A+','A-','AB+','AB-'], 'A+':['A+','AB+'], 'B-':['B+','B-','AB+','AB-'], 'B+':['B+','AB+'], 'AB-':['AB+','AB-'], 'AB+':['AB+'] };
+    requestForm.addEventListener('submit', e=>{ e.preventDefault(); const need = document.getElementById('reqBlood').value; const city = (document.getElementById('reqCity').value||'').toLowerCase(); if(!need){ alert('Select a blood group'); return; } const results = donors.filter(d=> compatibility[d.blood] && compatibility[d.blood].includes(need) && (!city || d.city.toLowerCase()===city)); if(!results.length) { matchesEl.innerHTML='<div class="muted">No matches found</div>'; return; } matchesEl.innerHTML = results.map(r=>`<div class="match"><strong>${esc(r.name)}</strong> <div class="muted">${esc(r.blood)} • ${esc(r.city)} • ${esc(r.phone)}</div><div class="muted">Last donation: ${formatDate(r.lastDonation)}</div></div>`).join(''); });
+    document.getElementById('btnClearMatches').addEventListener('click', ()=>{ matchesEl.innerHTML=''; document.getElementById('reqCity').value=''; document.getElementById('reqBlood').value=''; });
+
+    // Confirm dialog
+    function confirmDialog(title,text,ok){ confirmTitle.textContent=title; confirmText.textContent=text; confirmModal.classList.add('open'); confirmOk.onclick = ()=>{ confirmModal.classList.remove('open'); ok && ok(); }; confirmCancel.onclick = ()=>{ confirmModal.classList.remove('open'); }; }
+
+    // initial render
+    render();
+  </script>
+</body>
+</html>

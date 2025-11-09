@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Eligibility — Blood Donation Management</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="header-wrap">
+      <div class="brand"><div class="logo"><img src="logoblood.webp" alt="logo" style="width:56px;height:56px;border-radius:8px;object-fit:contain"/></div><div class="site-title"><h1>Eligibility</h1><div class="subtitle">Who can donate blood</div></div></div>
+      <nav class="nav">
+        <a class="btn secondary" href="index.html">Home</a>
+        <a class="btn secondary" href="donors.html">Donors</a>
+        <a class="btn secondary" href="add-donor.html">Add Donor</a>
+        <a class="btn secondary" href="request-blood.html">Request Blood</a>
+        <a class="btn secondary" href="donate-info.html">Guides</a>
+      </nav>
+    </header>
+
+    <main class="card fade-in">
+      <h2>Blood donation eligibility</h2>
+      <p class="muted">These are general guidelines. Local rules may vary — always check with your local blood bank.</p>
+
+      <h3>Basic eligibility criteria</h3>
+      <ul>
+        <li>Age: Usually 18–65 years for whole blood donations (varies by country).</li>
+        <li>Weight: Typically at least 50 kg (110 lbs) to ensure donor safety.</li>
+        <li>Health: Generally healthy and feeling well on the day of donation.</li>
+        <li>Hemoglobin: Sufficient hemoglobin level (often ≥12.5 g/dL for women and ≥13.0 g/dL for men).</li>
+      </ul>
+
+      <h3>Temporary deferrals</h3>
+      <ul>
+        <li>Recent illness: Wait at least 7 days after full recovery from a minor illness.</li>
+        <li>Recent vaccinations or travel: Some vaccines or travel to certain regions may lead to temporary deferral.</li>
+        <li>Recent tattoos or piercings: Often a 3- to 6-month deferral depending on local rules.</li>
+        <li>Pregnancy: Deferred during pregnancy and for a period after delivery.</li>
+        <li>Recent donation: Wait at least 90 days between whole blood donations (varies by service).</li>
+      </ul>
+
+      <h3>Permanent deferrals</h3>
+      <ul>
+        <li>Certain chronic conditions or high-risk behaviors that could affect blood safety.</li>
+        <li>Some medications may permanently exclude donation (consult local guidelines).</li>
+      </ul>
+
+      <p class="small muted">If you are unsure, contact your local blood center for specific guidance.</p>
+    </main>
+
+    <footer class="footer"><small>&copy; <span id="year"></span></small></footer>
+  </div>
+  <div id="_toast"></div>
+  <script>document.getElementById('year').textContent=new Date().getFullYear()</script>
+</body>
+</html>

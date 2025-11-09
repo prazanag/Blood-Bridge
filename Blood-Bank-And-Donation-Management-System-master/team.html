@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Team — Blood Donation Management</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="header-wrap">
+      <div class="brand"><div class="logo"><img src="logoblood.webp" alt="logo" style="width:56px;height:56px;border-radius:8px;object-fit:contain"/></div><div class="site-title"><h1>Team</h1><div class="subtitle">People behind the project</div></div></div>
+      <nav class="nav"><a class="btn" href="index.html">Home</a><a class="btn" href="about.html">About</a><a class="btn" href="donors.html">Donors</a><a class="btn" href="contact.html">Contact</a></nav>
+    </header>
+
+    <main class="card">
+      <h3>Contributors</h3>
+      <div class="grid-3" style="margin-top:12px">
+        <div class="card"><strong>Project Lead</strong><p class="small muted">Maintains demo and feature set.</p></div>
+        <div class="card"><strong>UX Designer</strong><p class="small muted">Visual design and user flows.</p></div>
+        <div class="card"><strong>Frontend Dev</strong><p class="small muted">Implements interactions and local storage.</p></div>
+      </div>
+    </main>
+
+    <footer class="footer"><small>&copy; <span id="year"></span></small></footer>
+  </div>
+  <div id="_toast"></div>
+  <script>document.getElementById('year').textContent=new Date().getFullYear()</script>
+</body>
+</html>

@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Blood Donation Management — Home</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    :root{
+      --border: rgba(0,0,0,
+      --accent: #c11d1d;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+
+    /* Masthead and hero overrides to match a clean portal look */
+    .masthead{
+      background:linear-gradient(90deg,var(--accent),#e94b4b);
+      color:#fff;
+      padding:10px 0;
+      border-radius:10px;
+    }
+    .masthead .meta{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+    }
+    .masthead .meta .contact{ font-weight:600; }
+
+    .search-panel{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      padding:18px;
+      border-radius:12px;
+      background:#fff;
+      border:1px solid rgba(0,0,0,0.04);
+      box-shadow:0 8px 30px rgba(0,0,0,0.05);
+      flex-wrap:wrap;
+    }
+    .search-panel input, .search-panel select{
+      padding:12px;
+      border-radius:10px;
+      border:1px solid var(--border);
+      min-width:160px;
+      background:#fff;
+      outline:none;
+    }
+
+    .quick-links{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+    .tile{padding:12px;border-radius:10px;background:linear-gradient(180deg,#fff,#fffefc);border:1px solid rgba(0,0,0,0.04)}
+    .stats{display:flex;gap:12px;flex-wrap:wrap}
+    .stat-box{flex:1;min-width:140px;padding:12px;border-radius:10px;background:#fff;text-align:center;border:1px solid rgba(0,0,0,0.04)}
+
+    /* Animation classes */
+    .fade-in {
+      opacity: 0;
+      animation: fadeIn 0.6s forwards;
+    }
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+    .slide-up {
+      transform: translateY(10px);
+      opacity: 0;
+      animation: slideUp 0.6s forwards;
+    }
+    @keyframes slideUp {
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Top masthead similar to portal header -->
+    <div class="masthead card" style="margin-bottom:12px">
+      <div class="meta">
+        <div style="display:flex;gap:14px;align-items:center">
+          <div class="logo">
+            <img src="logoblood.webp" alt="Blood Bank logo" class="logo-img" style="width:64px;height:64px;object-fit:contain;border-radius:8px;" />
+          </div>
+          <div>
+            <div style="font-weight:800;font-size:1.05rem">Blood Bridge</div>
+            <div style="font-size:0.92rem;opacity:0.95">Connect donors with patients </div>
+          </div>
+        </div>
+        <div class="contact small" style="text-align:right">
+          <div>Need urgent blood? Call <strong>+91 9876543210</strong></div>
+          <div style="font-size:0.85rem;opacity:0.9">Available 24x7 — Verify before contact</div>
+        </div>
+      </div>
+    </div>
+
+    <header class="header-wrap" style="margin-bottom:18px">
+      <div class="brand"><div class="site-title"><h1 style="font-size:1rem;margin:0">DESIRE!!</h1><div class="subtitle">Every drop connects. </div></div></div>
+      <nav class="nav">
+        <a class="btn secondary" href="index.html">Home</a>
+        <a class="btn secondary" href="services.html">Services</a>
+        <a class="btn secondary" href="donors.html">Donors</a>
+        <a class="btn secondary" href="add-donor.html">Add Donor</a>
+        <a class="btn secondary" href="request-blood.html">Request Blood</a>
+        <a class="btn secondary" href="eligibility.html">Eligibility</a>
+        <a class="btn secondary" href="preparing.html">Preparatios</a>
+        <a class="btn secondary" href="contact.html">Contact</a>
+      </nav>
+    </header>
+
+    <main>
+      <!-- HERO -->
+      <section class="card hero section headline fade-in" id="home">
+        <div class="hero-left">
+          <h2 style="margin:0">Save lives. Find donors fast.</h2>
+          <p class="small muted" style="margin-top:8px">Search compatible donors, register new donors, or request help — all in one place.</p>
+          <div class="hero-actions" style="margin-top:12px">
+            <a class="btn secondary" href="#add-donor">Add Donor</a>
+            <a class="btn secondary" href="#donors">View Donors</a>
+            <a class="btn secondary" href="#request">Request Blood</a>
+          </div>
+        </div>
+        <div style="width:320px">
+          <div class="card slide-up" style="padding:16px;background:linear-gradient(180deg,#fff,#fffefc);border-radius:12px;">
+            <div class="muted">Quick stats</div>
+            <div style="display:flex;gap:8px;margin-top:10px">
+              <div style="flex:1;text-align:center"><strong id="homeTotal">0</strong><div class="small muted">Donors</div></div>
+              <div style="flex:1;text-align:center"><strong id="homeGroups">0</strong><div class="small muted">Groups</div></div>
+            </div>
+            <div style="margin-top:12px;display:flex;gap:8px">
+              <button class="btn secondary" id="exportHome">Export CSV</button>
+              <label class="btn secondary">Import<input id="importHome" type="file" accept="text/csv" style="display:none"/></label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ADD DONOR -->
+      <section class="section" id="add-donor">
+        <div class="card fade-in">
+          <div class="section-title">Add / Edit Donor</div>
+          <form id="combinedAddForm" style="margin-top:12px">
+            <input type="hidden" id="c_id" />
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <div style="flex:1"><label>Name</label><input id="c_name" required /></div>
+              <div style="width:100px"><label>Age</label><input id="c_age" type="number" min="18" max="75" /></div>
+              <div style="width:160px"><label>Blood</label><select id="c_blood"><option value="">Select</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+              <div style="flex:1"><label>Phone</label><input id="c_phone" /></div>
+              <div style="width:180px"><label>City</label><input id="c_city" /></div>
+              <div style="width:180px"><label>Last Donation</label><input id="c_last" type="date" /></div>
+            </div>
+            <div style="margin-top:12px;display:flex;gap:8px"><button class="btn primary" type="submit">Save Donor</button><button type="button" class="btn" id="c_reset">Reset</button></div>
+          </form>
+        </div>
+      </section>
+
+      <!-- DONORS LIST -->
+      <section class="section" id="donors">
+        <div class="card fade-in">
+          <div class="section-title">Donor List</div>
+          <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
+            <input id="c_search" placeholder="Search name or city" style="flex:1" />
+            <select id="c_filterBlood" style="width:150px"><option value="">All groups</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select>
+            <button class="btn secondary" id="c_export">Export</button>
+          </div>
+          <div class="table-wrap" style="margin-top:12px"><table id="c_table"><thead><tr><th>Name</th><th>Blood</th><th>Phone</th><th>City</th><th>Last</th><th>Actions</th></tr></thead><tbody></tbody></table></div>
+        </div>
+      </section>
+
+      <!-- REQUEST BLOOD -->
+      <section class="section" id="request">
+        <div class="card fade-in">
+          <div class="section-title">Request Blood</div>
+          <form id="combinedRequestForm" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:end">
+            <div style="width:180px"><label>Needed group</label><select id="r_blood"><option value="">Select</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div>
+            <div style="flex:1"><label>City (optional)</label><input id="r_city" placeholder="City" /></div>
+            <div style="width:160px"><label>When needed</label><input type="date" id="r_when" /></div>
+            <div style="display:flex;gap:8px"><button class="btn primary" type="submit">Find Matches</button><button class="btn" type="button" id="r_clear">Clear</button></div>
+          </form>
+          <div id="combinedResults" style="margin-top:12px"></div>
+        </div>
+      </section>
+
+      <!-- GUIDES: eligibility / preparing / after care -->
+      <section class="section" id="guides">
+        <div class="card fade-in">
+          <div class="section-title">Donate Info & Guides</div>
+          <div style="margin-top:12px">
+            <a class="btn secondary" href="#eligibility">Eligibility</a>
+            <a class="btn secondary" href="#preparing">Preparing</a>
+          </div>
+
+          <div id="eligibility" style="margin-top:12px">
+            <h4>Eligibility</h4>
+            <p class="muted">General criteria: age, weight, health and hemoglobin — see the detailed page for full guidance.</p>
+            <p><a href="eligibility.html">Open full eligibility guide</a></p>
+          </div>
+
+          <div id="preparing" style="margin-top:12px">
+            <h4>Preparing to donate</h4>
+            <p class="muted">Eat well, hydrate, bring ID — small steps to help your donation go smoothly.</p>
+            <p><a href="preparing.html">Open preparing guide</a></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- FEEDBACK & CONTACT -->
+      <section class="section" id="contact">
+        <div class="card fade-in">
+          <div class="grid-2">
+            <div>
+              <div class="section-title">Feedback</div>
+              <form id="combinedFeedbackForm" style="margin-top:10px">
+                <div><label>Name (optional)</label><input id="fb_name" /></div>
+                <div style="margin-top:8px"><label>Message</label><textarea id="fb_msg" rows="4"></textarea></div>
+                <div style="margin-top:8px"><button class="btn primary" type="submit">Send Feedback</button></div>
+              </form>
+            </div>
+            <div>
+              <div class="section-title">Contact</div>
+              <form id="combinedContactForm" style="margin-top:10px">
+                <div><label>Your name</label><input id="c_name_contact" /></div>
+                <div style="margin-top:8px"><label>Email / Phone</label><input id="c_contact" /></div>
+                <div style="margin-top:8px"><label>Message</label><textarea id="c_msg" rows="4"></textarea></div>
+                <div style="margin-top:8px"><button class="btn primary" type="submit">Send</button></div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TEAM / RESOURCES / FAQ -->
+      <section class="section" id="team">
+        <div class="card fade-in">
+          <div class="section-title">Team</div>
+          <div class="grid-3" style="margin-top:12px">
+            <div class="card"><strong>Project Lead</strong><p class="small muted">Maintains demo and feature set.</p></div>
+            <div class="card"><strong>UX Designer</strong><p class="small muted">Visual design and user flows.</p></div>
+            <div class="card"><strong>Frontend Dev</strong><p class="small muted">Implements interactions and local storage.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="resources">
+        <div class="card fade-in">
+          <div class="section-title">Resources & FAQ</div>
+          <ul style="margin-top:12px" class="small muted">
+            <li><a href="donate-info.html">Donate Info (eligibility, preparing, after-care)</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+          </ul>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="footer">
+      <small>&copy; <span id="year"></span> Blood Donation Management — Demo (localStorage)</small>
+    </footer>
+  </div>
+
+  <div id="_toast" role="status" aria-live="polite"></div>
+  <script src="js/main.js"></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    const donors = loadDonors();
+    document.getElementById('dashTotal').textContent = donors.length;
+    document.getElementById('dashGroups').textContent = [...new Set(donors.map(d=>d.blood).filter(Boolean))].length;
+    document.getElementById('dashRecent').textContent = donors[0]? esc(donors[0].name) : '—';
+    document.getElementById('exportTop').addEventListener('click', ()=> exportDonorsCSV(donors));
+    document.getElementById('importHome')?.addEventListener('change', e=> importDonorsCSV(e.target.files[0], parsed=>{ parsed.forEach(r=>{ if(!r.name) return; const list = loadDonors(); list.unshift({ id: r.id||uid(), name:r.name, age:parseInt(r.age,10)||0, gender:r.gender||'Male', blood:r.blood||'', phone:r.phone||'', city:r.city||'', lastDonation:r.lastDonation||null, updated:new Date().toISOString() }); saveDonors(list); }); showToast('Imported'); location.reload(); }));
+
+    // recent donors panel
+    (function(){ const panel = document.getElementById('recentPanel'); const list = donors.slice(0,8); panel.innerHTML = list.length ? list.map(d=>`<div class="tile" style="margin-bottom:8px"><strong>${esc(d.name)}</strong><div class="muted">${d.blood} • ${esc(d.city)} • ${formatDate(d.lastDonation)}</div><div style="margin-top:8px"><button class="btn secondary" onclick="copyToClipboard('${esc(d.phone)}')">Copy phone</button> <a class="btn secondary" href='add-donor.html?id=${d.id}'>Edit</a></div></div>`).join('') : '<div class="muted">No donors yet</div>'; })();
+
+    // top search handler
+    document.getElementById('findTop').addEventListener('click', ()=>{
+      const need = document.getElementById('needTop').value; const city = document.getElementById('cityTop').value.trim().toLowerCase();
+      if(!need){ showToast('Select a blood group'); return; }
+      const matches = loadDonors().filter(d=> COMPAT[d.blood] && COMPAT[d.blood].includes(need));
+      const byCity = city ? matches.filter(m=> (m.city||'').toLowerCase()===city ) : matches;
+      if(!byCity.length){ showToast('No matches found'); return; }
+      // show in a simple modal-like alert for demo
+      const list = byCity.map(x=>`${x.name} — ${x.blood} — ${x.phone}`).join('\n');
+      alert('Matches:\n' + list);
+    });
+
+    // Combined form handlers
+    (function(){
+      const donorForm = document.getElementById('combinedAddForm');
+      if(!donorForm) return;
+      donorForm.addEventListener('submit', e=>{
+        e.preventDefault();
+        const id = donorForm.c_id.value.trim();
+        const name = donorForm.c_name.value.trim();
+        const age = parseInt(donorForm.c_age.value,10) || 0;
+        const blood = donorForm.c_blood.value;
+        const phone = donorForm.c_phone.value.trim();
+        const city = donorForm.c_city.value.trim();
+        const lastDonation = donorForm.c_last.value ? new Date(donorForm.c_last.value).toISOString() : null;
+        if(!name){ return showToast('Name is required'); }
+        let list = loadDonors();
+        if(id){ // edit
+          const index = list.findIndex(d=> d.id===id);
+          if(index===-1){ return showToast('Donor not found'); }
+          list[index] = { id, name, age, gender:'Male', blood, phone, city, lastDonation, updated:new Date().toISOString() };
+          showToast('Donor updated');
+        }else{ // add new
+          const bloodGroup = blood || null;
+          const isO = bloodGroup==='O+' || bloodGroup==='O-';
+          const isAB = bloodGroup==='AB+' || bloodGroup==='AB-';
+          const comp = isO ? ['O+','O-'] : isAB ? ['AB+','AB-'] : [bloodGroup];
+          const exists = list.find(d=> d.name===name && d.phone===phone && comp.includes(d.blood));
+          if(exists){ return showToast('Donor already exists with similar details'); }
+          const newDonor = { id: uid(), name, age, gender:'Male', blood, phone, city, lastDonation, updated:new Date().toISOString() };
+          list.unshift(newDonor);
+          showToast('Donor registered');
+        }
+        saveDonors(list);
+        donorForm.reset();
+        setTimeout(()=>{ location.reload(); }, 500);
+      });
+
+      // donor table search and actions
+      const table = document.getElementById('c_table');
+      if(!table) return;
+      const searchInput = document.getElementById('c_search');
+      const filterBlood = document.getElementById('c_filterBlood');
+      const exportBtn = document.getElementById('c_export');
+      let donorList = donors.slice();
+      function updateTable(list){
+        const tbody = table.querySelector('tbody');
+        tbody.innerHTML = '';
+        if(!list.length){ tbody.innerHTML = '<tr><td colspan="6" class="muted">No donors found</td></tr>'; return; }
+        list.forEach(d=>{
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${esc(d.name)}</td>
+            <td>${esc(d.blood)}</td>
+            <td>${esc(d.phone)}</td>
+            <td>${esc(d.city)}</td>
+            <td>${d.lastDonation ? formatDate(d.lastDonation) : '—'}</td>
+            <td>
+              <button class="btn secondary" onclick="copyToClipboard('${esc(d.phone)}')">Copy</button>
+              <a class="btn secondary" href='add-donor.html?id=${d.id}'>Edit</a>
+            </td>
+          `;
+          tbody.appendChild(row);
+        });
+      }
+      function filterTable(){
+        const query = searchInput.value.trim().toLowerCase();
+        const bloodGroup = filterBlood.value;
+        donorList = donors.filter(d=>{
+          const byName = d.name.toLowerCase().includes(query);
+          const byCity = d.city?.toLowerCase().includes(query) || false;
+          const byBlood = bloodGroup ? d.blood === bloodGroup : true;
+          return (byName || byCity) && byBlood;
+        });
+        updateTable(donorList);
+      }
+      searchInput.addEventListener('input', filterTable);
+      filterBlood.addEventListener('change', filterTable);
+      exportBtn.addEventListener('click', ()=> exportDonorsCSV(donorList));
+
+      // request form
+      const requestForm = document.getElementById('combinedRequestForm');
+      if(requestForm){
+        requestForm.addEventListener('submit', e=>{
+          e.preventDefault();
+          const blood = requestForm.r_blood.value;
+          const city = requestForm.r_city.value.trim();
+          const when = requestForm.r_when.value;
+          if(!blood){ return showToast('Select a blood group'); }
+          let matches = loadDonors().filter(d=> COMPAT[d.blood] && COMPAT[d.blood].includes(blood));
+          if(city){ matches = matches.filter(m=> (m.city||'').toLowerCase()===city.toLowerCase() ); }
+          if(!matches.length){ return showToast('No matches found'); }
+          const list = matches.map(x=>`<div><strong>${esc(x.name)}</strong> (${esc(x.blood)}) - ${esc(x.phone)} - ${esc(x.city)}</div>`).join('');
+          document.getElementById('combinedResults').innerHTML = `<div class="muted">Matches found: ${matches.length}</div>` + list;
+        });
+      }
+
+      // feedback and contact forms
+      const feedbackForm = document.getElementById('combinedFeedbackForm');
+      if(feedbackForm){
+        feedbackForm.addEventListener('submit', e=>{
+          e.preventDefault();
+          const name = feedbackForm.fb_name.value.trim();
+          const msg = feedbackForm.fb_msg.value.trim();
+          if(!msg){ return showToast('Message is required'); }
+          // simple local save emulation
+          let feedbacks = JSON.parse(localStorage.getItem('feedbacks')||'[]');
+          feedbacks.push({ id: uid(), name, msg, date:new Date().toISOString() });
+          localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
+          feedbackForm.reset();
+          showToast('Feedback sent!');
+        });
+      }
+      const contactForm = document.getElementById('combinedContactForm');
+      if(contactForm){
+        contactForm.addEventListener('submit', e=>{
+          e.preventDefault();
+          const name = contactForm.c_name_contact.value.trim();
+          const contact = contactForm.c_contact.value.trim();
+          const msg = contactForm.c_msg.value.trim();
+          if(!name || !contact || !msg){ return showToast('All fields are required'); }
+          // simple local save emulation
+          let contacts = JSON.parse(localStorage.getItem('contacts')||'[]');
+          contacts.push({ id: uid(), name, contact, msg, date:new Date().toISOString() });
+          localStorage.setItem('contacts', JSON.stringify(contacts));
+          contactForm.reset();
+          showToast('Message sent!');
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

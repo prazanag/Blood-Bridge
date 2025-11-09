@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Feedback — Blood Donation Management</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="header-wrap">
+      <div class="brand"><div class="logo"><img src="logoblood.webp" alt="logo" style="width:56px;height:56px;border-radius:8px;object-fit:contain"/></div><div class="site-title"><h1>Feedback</h1><div class="subtitle">We value your feedback</div></div></div>
+      <nav class="nav">
+        <a class="btn secondary" href="index.html">Home</a>
+        <a class="btn secondary" href="about.html">About</a>
+        <a class="btn secondary" href="donors.html">Donors</a>
+        <a class="btn secondary" href="add-donor.html">Add Donor</a>
+        <a class="btn secondary" href="eligibility.html">Eligibility</a>
+        <a class="btn secondary" href="preparing.html">Preparing</a>
+        <a class="btn secondary" href="after-care.html">After care</a>
+        <a class="btn secondary" href="contact.html">Contact</a>
+      </nav>
+    </header>
+
+    <main class="card fade-in">
+      <form id="feedbackForm">
+        <div><label>Name (optional)</label><input id="fbName" /></div>
+        <div style="margin-top:8px"><label>Message</label><textarea id="fbMsg" rows="5" style="width:100%;border-radius:8px;padding:10px"></textarea></div>
+        <div style="margin-top:10px;display:flex;gap:8px"><button class="btn primary" type="submit">Send Feedback</button><button class="btn" type="button" id="fbClear">Clear</button></div>
+      </form>
+
+      <hr style="margin:12px 0;border:none;border-top:1px solid var(--border)">
+      <h4>Previous feedback</h4>
+      <div id="feedbackList"></div>
+    </main>
+
+    <footer class="footer"><small>&copy; <span id="year"></span></small></footer>
+  </div>
+
+  <div id="_toast"></div>
+  <script src="js/main.js"></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    const key = 'bbms_feedbacks';
+    function load(){ try{return JSON.parse(localStorage.getItem(key))||[]}catch(e){return []} }
+    function save(list){ localStorage.setItem(key, JSON.stringify(list)) }
+    function render(){ const list = load(); const el = document.getElementById('feedbackList'); el.innerHTML = list.map(f=>`<div class="card" style="margin-bottom:8px"><strong>${esc(f.name||'Anonymous')}</strong><div class="muted">${new Date(f.ts).toLocaleString()}</div><p style="margin:8px 0">${esc(f.msg)}</p></div>`).join('') || '<div class="muted">No feedback yet</div>' }
+    render();
+    document.getElementById('feedbackForm').addEventListener('submit', e=>{ e.preventDefault(); const name = document.getElementById('fbName').value.trim(); const msg = document.getElementById('fbMsg').value.trim(); if(!msg){ alert('Please enter a message'); return } const list = load(); list.unshift({name,msg,ts:Date.now()}); save(list); showToast('Thanks for feedback'); document.getElementById('fbMsg').value=''; document.getElementById('fbName').value=''; render(); });
+    document.getElementById('fbClear').addEventListener('click', ()=>{ document.getElementById('fbMsg').value=''; document.getElementById('fbName').value=''; });
+  </script>
+</body>
+</html>

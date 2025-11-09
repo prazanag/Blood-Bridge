@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Donor List — Blood Donation Management</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="header-wrap">
+      <div class="brand"><div class="logo"><img src="logoblood.webp" alt="logo" style="width:56px;height:56px;border-radius:8px;object-fit:contain"/></div><div class="site-title"><h1>Donor List</h1><div class="subtitle">Search and manage donors</div></div></div>
+      <nav class="nav">
+        <a class="btn secondary" href="index.html">Home</a>
+        <a class="btn secondary" href="eligibility.html">Eligibility</a>
+        <a class="btn secondary" href="preparing.html">Preparing</a>
+        <a class="btn secondary" href="donors.html">Donors</a>
+        <a class="btn secondary" href="add-donor.html">Add Donor</a>
+        <a class="btn secondary" href="request-blood.html">Request Blood</a>
+        <a class="btn secondary" href="contact.html">Contact</a>
+      </nav>
+    </header>
+
+    <main class="card">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px">
+        <input id="qName" placeholder="Search name" style="flex:1" />
+        <select id="qGroup" style="width:140px"><option value="">All groups</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select>
+        <input id="qCity" placeholder="City" style="width:120px" />
+        <button class="btn" id="btnClear">Clear</button>
+        <button class="btn primary" id="btnExport">Export CSV</button>
+      </div>
+
+      <div class="table-wrap">
+        <table id="tbl">
+          <thead><tr><th data-sort="name">Name</th><th data-sort="age">Age</th><th data-sort="blood">Blood</th><th>Phone</th><th data-sort="city">City</th><th>Last</th><th>Actions</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </main>
+
+    <footer class="footer"><small>&copy; <span id="year"></span></small></footer>
+  </div>
+
+  <div id="_toast"></div>
+  <script src="js/main.js"></script>
+  <script src="js/donors.js"></script>
+</body>
+</html>

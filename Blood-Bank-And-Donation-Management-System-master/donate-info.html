@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Donate Info — Blood Donation Management</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="header-wrap"><div class="brand"><div class="logo"><img src="logoblood.webp" alt="logo" style="width:56px;height:56px;border-radius:8px;object-fit:contain"/></div><div class="site-title"><h1>Donate Info</h1><div class="subtitle">How to prepare</div></div></div>
+      <nav class="nav"><a class="btn secondary" href="index.html">Home</a><a class="btn secondary" href="eligibility.html">Eligibility</a><a class="btn secondary" href="preparing.html">Preparing</a><a class="btn secondary" href="after-care.html">After care</a><a class="btn secondary" href="contact.html">Contact</a></nav>
+    </header>
+
+    <main class="card fade-in">
+      <h3>Donate Info</h3>
+      <p class="muted">Quick links to detailed guides:</p>
+      <ul>
+        <li><a href="eligibility.html">Blood donation eligibility</a> — who can donate and temporary/permanent deferrals.</li>
+        <li><a href="preparing.html">Preparing to donate</a> — tips on eating, hydration and documents to bring.</li>
+        <li><a href="after-care.html">After donation care</a> — recovery tips and when to seek help.</li>
+      </ul>
+    </main>
+
+    <footer class="footer"><small>&copy; <span id="year"></span></small></footer>
+  </div>
+  <div id="_toast"></div>
+  <script>document.getElementById('year').textContent=new Date().getFullYear()</script>
+</body>
+</html>

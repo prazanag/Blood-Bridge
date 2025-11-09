@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Contact — Blood Donation Management</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="header-wrap">
+      <div class="brand"><div class="logo"><img src="logoblood.webp" alt="logo" style="width:56px;height:56px;border-radius:8px;object-fit:contain"/></div><div class="site-title"><h1>Contact</h1><div class="subtitle">Get in touch</div></div></div>
+      <nav class="nav"><a class="btn secondary" href="index.html">Home</a><a class="btn secondary" href="eligibility.html">Eligibility</a><a class="btn secondary" href="preparing.html">Preparing</a><a class="btn secondary" href="after-care.html">After care</a><a class="btn secondary" href="donors.html">Donors</a><a class="btn secondary" href="add-donor.html">Add Donor</a><a class="btn secondary" href="request-blood.html">Request Blood</a></nav>
+    </header>
+
+    <main class="card fade-in">
+      <h3>Contact</h3>
+      <p class="muted">For demo support or queries, leave a message.</p>
+      <form id="contactForm">
+        <div><label>Name</label><input id="cName" /></div>
+        <div style="margin-top:8px"><label>Email</label><input id="cEmail" type="email" /></div>
+        <div style="margin-top:8px"><label>Message</label><textarea id="cMsg" rows="5"></textarea></div>
+        <div style="margin-top:10px;display:flex;gap:8px"><button class="btn primary" type="submit">Send</button><button class="btn" type="button" id="cClear">Clear</button></div>
+      </form>
+    </main>
+
+    <footer class="footer"><small>&copy; <span id="year"></span></small></footer>
+  </div>
+  <div id="_toast"></div>
+  <script src="js/main.js"></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    document.getElementById('contactForm').addEventListener('submit', e=>{ e.preventDefault(); const n=document.getElementById('cName').value.trim(); const em=document.getElementById('cEmail').value.trim(); const m=document.getElementById('cMsg').value.trim(); if(!m){ alert('Enter a message'); return; } showToast('Message saved (demo)'); document.getElementById('cName').value=''; document.getElementById('cEmail').value=''; document.getElementById('cMsg').value=''; });
+    document.getElementById('cClear').addEventListener('click', ()=>{ document.getElementById('cName').value=''; document.getElementById('cEmail').value=''; document.getElementById('cMsg').value=''; });
+  </script>
+</body>
+</html>

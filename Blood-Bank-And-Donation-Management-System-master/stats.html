@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Statistics — Blood Donation Management</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="header-wrap">
+      <div class="brand"><div class="logo"><img src="logoblood.webp" alt="logo" style="width:56px;height:56px;border-radius:8px;object-fit:contain"/></div><div class="site-title"><h1>Statistics</h1><div class="subtitle">Donor analytics (demo)</div></div></div>
+      <nav class="nav"><a class="btn" href="index.html">Home</a><a class="btn" href="donors.html">Donors</a><a class="btn" href="add-donor.html">Add Donor</a><a class="btn" href="request-blood.html">Request Blood</a></nav>
+    </header>
+
+    <main class="card">
+      <h3>Overview</h3>
+      <div id="statsArea" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:12px"></div>
+      <div style="margin-top:12px" id="groupBreakdown"></div>
+    </main>
+
+    <footer class="footer"><small>&copy; <span id="year"></span></small></footer>
+  </div>
+  <div id="_toast"></div>
+  <script src="js/main.js"></script>
+  <script>
+    document.getElementById('year').textContent=new Date().getFullYear();
+    const donors = loadDonors();
+    const total = donors.length; const groups = [...new Set(donors.map(d=>d.blood).filter(Boolean))];
+    document.getElementById('statsArea').innerHTML = `
+      <div class="card" style="text-align:center"><div class="muted">Total donors</div><strong>${total}</strong></div>
+      <div class="card" style="text-align:center"><div class="muted">Blood groups</div><strong>${groups.length}</strong></div>
+      <div class="card" style="text-align:center"><div class="muted">Last updated</div><strong>${donors[0]? new Date(donors[0].updated).toLocaleString():'—'}</strong></div>
+    `;
+    const breakdown = groups.map(g=>{ const count = donors.filter(d=>d.blood===g).length; return `<div style="margin-bottom:8px"><strong>${g}</strong> — <span class="muted">${count} donors</span></div>`}).join('');
+    document.getElementById('groupBreakdown').innerHTML = `<h4>Group breakdown</h4>${breakdown}`;
+  </script>
+</body>
+</html>

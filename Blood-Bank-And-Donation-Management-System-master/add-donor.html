@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Add Donor — Blood Donation Management</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="header-wrap">
+      <div class="brand"><div class="logo"><img src="logoblood.webp" alt="logo" style="width:56px;height:56px;border-radius:8px;object-fit:contain"/></div><div class="site-title"><h1>Add Donor</h1><div class="subtitle">Register a new donor</div></div></div>
+      <nav class="nav">
+        <a class="btn secondary" href="index.html">Home</a>
+        <a class="btn secondary" href="eligibility.html">Eligibility</a>
+        <a class="btn secondary" href="preparing.html">Preparing</a>
+        <a class="btn secondary" href="donors.html">Donors</a>
+        <a class="btn secondary" href="add-donor.html">Add Donor</a>
+        <a class="btn secondary" href="request-blood.html">Request Blood</a>
+      </nav>
+    </header>
+
+    <main class="card fade-in">
+      <form id="formAdd">
+        <input type="hidden" id="id" />
+        <div class="form-row">
+          <div style="flex:1"><label>Name</label><input id="name" required /></div>
+          <div style="width:120px"><label>Age</label><input id="age" type="number" min="18" max="75" required /></div>
+        </div>
+        <div class="form-row" style="margin-top:10px">
+          <div style="flex:1"><label>Gender</label><select id="gender"><option>Male</option><option>Female</option><option>Other</option></select></div>
+          <div style="width:140px"><label>Blood</label><select id="blood"><option value="">Select</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div>
+        </div>
+        <div class="form-row" style="margin-top:10px">
+          <div style="flex:1"><label>Phone</label><input id="phone" required /></div>
+          <div style="width:160px"><label>City</label><input id="city" required /></div>
+        </div>
+        <div style="margin-top:10px"><label>Last donation</label><input id="last" type="date" /></div>
+        <div style="margin-top:12px;display:flex;gap:8px;align-items:center"><button class="btn primary" type="submit">Save</button><button class="btn" id="btnReset" type="button">Reset</button><a class="btn" href="donors.html">Back to list</a></div>
+      </form>
+    </main>
+
+    <footer class="footer"><small>&copy; <span id="year"></span></small></footer>
+  </div>
+
+  <div id="_toast"></div>
+  <script src="js/main.js"></script>
+  <script src="js/add-donor.js"></script>
+</body>
+</html>
